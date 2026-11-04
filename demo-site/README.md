@@ -4,7 +4,29 @@
 
 It is intentionally inaccessible. Do not use it as a template for production work.
 
-## Intentional failures
+## Files
+
+- `index.html` is the intentionally inaccessible baseline. It is unchanged.
+- `index.repaired.html` is a verified "after" copy for comparison. It adds alt text to the hero image, empty alt text to decorative product images, and turns the header search icon into a named link that moves focus to the search form.
+
+## Reproducing the comparison
+
+```bash
+npm install
+npx playwright install chromium
+npm run demo:a11y
+```
+
+The comparison loads both files directly with `file://` and runs the same axe-core WCAG 2.0, 2.1, and 2.2 A/AA tags as the test suite.
+
+| File | Expected result |
+| --- | --- |
+| `index.html` | 6 violations across 19 elements: `button-name`, `color-contrast`, `html-has-lang`, `image-alt`, `link-name`, `select-name` |
+| `index.repaired.html` | 4 violations across 14 elements: `color-contrast`, `html-has-lang`, `link-name`, `select-name` |
+
+The repaired copy also passes the keyboard path: search link → Enter → `FORM#gear-search` → Tab → search input. At 375x667 the search link stays visible while the Gear, Guides, and Journal links are hidden.
+
+## Intentional failures in the baseline
 
 - The `<html>` element has no `lang` attribute.
 - Hero and product images have no `alt` attribute.
@@ -14,6 +36,10 @@ It is intentionally inaccessible. Do not use it as a template for production wor
 - The page includes a skipped heading level.
 - Some content sits outside landmark regions.
 - A link with only an icon has no accessible text.
+
+## Remaining limitations
+
+`index.repaired.html` still has `color-contrast`, `html-has-lang`, `link-name` (the footer icon link), and `select-name` violations. It also keeps the skipped heading level and landmark issues that axe-core does not report as violations. The repaired copy demonstrates two fixes; it is not a fully accessible page or a compliance certificate. Automated checks cover only part of WCAG, so manual keyboard, screen-reader, zoom/reflow, and form testing are still required.
 
 ## Real scans
 

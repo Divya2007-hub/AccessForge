@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
+    "demo:a11y": "node scripts/demo-a11y-compare.mjs",
     "switch:setup": "node scripts/switch-setup.mjs",
     "playwright:install": "playwright install chromium"
   },

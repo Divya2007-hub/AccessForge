@@ -10,7 +10,7 @@ The product is intentionally honest about its limits: it does not show a composi
 - Server-side URL validation, DNS resolution checks, private-network blocking, request-level target blocking, rate limits, and scan concurrency limits.
 - Report pages with severity counts, affected elements, failure summaries, rule documentation links, suggested remediation, and a manual verification checklist.
 - Dashboard with scan totals, severity distribution, recent scans, and locally stored scan history.
-- Bundled demo website with intentional accessibility defects, audited through a real `file://` axe-core run.
+- Bundled demo website with intentional accessibility defects, audited through a real `file://` axe-core run, plus a verified repaired copy for before/after comparison.
 - Local fix review driven by a saved scan: deterministic drafts for supported rules, editable proposed HTML, before/after comparison, approve/reject/reopen decisions, and a persistent local audit trail.
 - Approved-fix export: a JSON review bundle plus a fragment diff containing only the exact approved HTML snapshots, notes, and timestamps.
 - Agent workflow page that documents the planned architecture and plainly marks it as disconnected.
@@ -58,7 +58,34 @@ cp .env.example .env.local
 | `npm run lint` | Run ESLint. |
 | `npm run typecheck` | Run TypeScript with `--noEmit`. |
 | `npm run test:e2e` | Run the Playwright suite; it starts the dev server on port 3100. |
+| `npm run demo:a11y` | Compare the bundled demo baseline and repaired copy with axe-core; also checks keyboard and mobile behavior. |
 | `npm run playwright:install` | Install the Chromium build used by Playwright. |
+
+## Reproducing the accessibility demonstration
+
+The repository includes two static versions of the bundled demo:
+
+- `demo-site/index.html` is the intentionally inaccessible baseline. It is unchanged.
+- `demo-site/index.repaired.html` is a verified "after" copy. It adds alt text to the hero image, empty alt text to decorative product images, and turns the header search icon into a named link that moves focus to the search form.
+
+Run the comparison without starting the app or contacting an external service:
+
+```bash
+npm install
+npx playwright install chromium
+npm run demo:a11y
+```
+
+The script loads both files directly with `file://`, runs axe-core with the same WCAG 2.0, 2.1, and 2.2 A/AA tags as the test suite, and prints:
+
+| File | Expected result |
+| --- | --- |
+| `demo-site/index.html` | 6 violations across 19 elements: `button-name`, `color-contrast`, `html-has-lang`, `image-alt`, `link-name`, `select-name` |
+| `demo-site/index.repaired.html` | 4 violations across 14 elements: `color-contrast`, `html-has-lang`, `link-name`, `select-name` |
+
+The repaired copy also passes the keyboard check: focus the header search link, press Enter to move focus to `FORM#gear-search`, then press Tab to reach the search input. At 375x667 the search link stays visible while the Gear, Guides, and Journal links are hidden.
+
+The repaired copy is not a compliance certificate. The remaining violations are pre-existing limitations, and automated axe-core checks cover only part of WCAG. The demo files are static and contain no credentials, environment values, Switch handoffs, or local state.
 
 ## How scanning works
 
@@ -127,10 +154,12 @@ The Playwright suite covers:
 
 The config runs tests serially and starts `next dev` on `http://127.0.0.1:3100`.
 
+The standalone `npm run demo:a11y` check does not start the dev server and is not part of the Playwright suite.
+
 ## Project layout
 
 ```text
-demo-site/                 Intentional accessibility demo page
+demo-site/                 Intentional accessibility baseline and verified repaired copy
 src/app/                   Next.js routes, API handlers, and pages
 src/components/            Application shell, report, review, and UI components
 src/lib/client/            localStorage history, review storage, and fetch helpers

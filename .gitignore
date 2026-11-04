@@ -49,4 +49,3 @@ next-env.d.ts
 # Local development logs
 /dev-server.log
 /dev-server.err.log
-/demo-site/index.repaired.html
