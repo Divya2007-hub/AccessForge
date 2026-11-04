@@ -1,0 +1,475 @@
+<!doctype html>
+<!--
+  INTENTIONAL ACCESSIBILITY PROBLEMS IN THIS DEMO PAGE:
+  1. The html element is missing a lang attribute.
+  2. Images are missing alternative text.
+  3. Form controls rely on placeholders instead of labels.
+  4. An icon-only button and an icon-only link have no accessible name.
+  5. Several text colors fail WCAG AA contrast.
+  6. A heading level is skipped (h2 -> h4).
+  Do not copy this markup into production.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Northwind Trails — Gear &amp; Guides</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0b0f16;
+        --panel: #111722;
+        --panel-2: #151d2b;
+        --ink: #f4f6fb;
+        --muted: #a6afc2;
+        --faint: #5b6270;
+        --line: #232d3d;
+        --brand: #8b5cf6;
+        --brand-2: #6366f1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+      }
+
+      a {
+        color: #c4b5fd;
+      }
+
+      .wrap {
+        width: min(1120px, calc(100% - 40px));
+        margin-inline: auto;
+      }
+
+      .demo-banner {
+        background: #3b1d1d;
+        color: #fecaca;
+        border-bottom: 1px solid #7f1d1d;
+        font-size: 14px;
+        padding: 10px 0;
+        text-align: center;
+      }
+
+      header.site {
+        border-bottom: 1px solid var(--line);
+        background: rgba(11, 15, 22, 0.9);
+        position: sticky;
+        top: 0;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        min-height: 68px;
+      }
+
+      .logo {
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        font-size: 19px;
+        color: var(--ink);
+        text-decoration: none;
+        margin-right: auto;
+      }
+
+      .nav a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .icon-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: var(--panel-2);
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 56px;
+        align-items: center;
+        padding: 72px 0 56px;
+      }
+
+      .eyebrow {
+        color: #a78bfa;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        font-size: clamp(38px, 5.6vw, 66px);
+        line-height: 1.04;
+        letter-spacing: -0.04em;
+        margin: 14px 0 18px;
+      }
+
+      .lede {
+        color: var(--muted);
+        font-size: 18px;
+        max-width: 52ch;
+      }
+
+      .hero img {
+        width: 100%;
+        height: auto;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        display: block;
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 26px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        border: 1px solid transparent;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--brand), var(--brand-2));
+        color: #fff;
+      }
+
+      .btn-ghost {
+        background: #171d29;
+        border-color: var(--line);
+        color: #5b6270;
+      }
+
+      section {
+        padding: 52px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        font-size: 30px;
+        letter-spacing: -0.03em;
+        margin: 0 0 6px;
+      }
+
+      h4 {
+        font-size: 14px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #a78bfa;
+        margin: 0 0 18px;
+      }
+
+      .section-note {
+        color: var(--faint);
+        margin: 0 0 28px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+
+      .card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .card-body {
+        padding: 18px;
+      }
+
+      .card h3 {
+        margin: 0 0 4px;
+        font-size: 17px;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--faint);
+        font-size: 14px;
+      }
+
+      .search {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 24px;
+        max-width: 560px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        min-height: 46px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--ink);
+        padding: 10px 14px;
+        font: inherit;
+      }
+
+      textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+
+      .newsletter {
+        display: grid;
+        gap: 12px;
+        max-width: 540px;
+      }
+
+      .check-row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        color: var(--faint);
+        font-size: 14px;
+      }
+
+      .check-row input {
+        width: 18px;
+        min-height: 18px;
+        margin-top: 4px;
+      }
+
+      .fine-print {
+        color: #4f5666;
+        font-size: 12px;
+      }
+
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 34px 0 56px;
+        color: var(--faint);
+        font-size: 13px;
+      }
+
+      .footer-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      @media (max-width: 860px) {
+        .hero {
+          grid-template-columns: 1fr;
+          padding-top: 44px;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .nav {
+          gap: 14px;
+        }
+
+        .nav a:not(.logo) {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-banner">
+      Intentional accessibility demo site. It contains known problems and must
+      not be used in production.
+    </div>
+
+    <header class="site">
+      <div class="wrap nav">
+        <a class="logo" href="#">Northwind Trails</a>
+        <a href="#gear">Gear</a>
+        <a href="#guides">Guides</a>
+        <a href="#journal">Journal</a>
+        <button class="icon-button" type="button">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-3.5-3.5"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="wrap hero">
+      <div>
+        <p class="eyebrow">Field tested since 2014</p>
+        <h1>Go further. Pack lighter. Leave no trace.</h1>
+        <p class="lede">
+          Considered gear and honest trail guides for people who would rather be
+          outside. Built by a small team in the Pacific Northwest.
+        </p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#gear">Shop the collection</a>
+          <a class="btn btn-ghost" href="#guides">Read the trail guides</a>
+        </div>
+      </div>
+      <div>
+        <img src="./demo-hero.svg" width="1200" height="700" />
+      </div>
+    </div>
+
+    <main>
+      <section id="gear">
+        <div class="wrap">
+          <h2>Trail-ready essentials</h2>
+          <p class="section-note">
+            Small-batch equipment for long weekends and short escapes.
+          </p>
+          <h4>Our favorites this season</h4>
+
+          <form class="search" action="#" role="search">
+            <input type="search" name="q" placeholder="Search gear" />
+            <button class="btn btn-primary" type="submit">Search</button>
+          </form>
+
+          <div class="grid">
+            <article class="card">
+              <img src="./demo-product.svg" width="640" height="420" />
+              <div class="card-body">
+                <h3>Ridgeline 28L Pack</h3>
+                <p>Weatherproof, 980 grams, built for fast overnights.</p>
+              </div>
+            </article>
+            <article class="card">
+              <img src="./demo-product.svg" width="640" height="420" />
+              <div class="card-body">
+                <h3>Northwind Shell</h3>
+                <p>A quiet, breathable layer for sudden weather changes.</p>
+              </div>
+            </article>
+            <article class="card">
+              <img src="./demo-product.svg" width="640" height="420" />
+              <div class="card-body">
+                <h3>Camp Ledger Journal</h3>
+                <p>Water-resistant pages for notes, maps, and sketches.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="guides">
+        <div class="wrap">
+          <h2>Plan your next route</h2>
+          <p class="section-note">
+            Conditions change quickly. Always check local guidance before you
+            head out.
+          </p>
+
+          <form class="newsletter" action="#">
+            <select name="region">
+              <option>Choose a region</option>
+              <option>Cascades</option>
+              <option>Olympics</option>
+              <option>Coast Range</option>
+            </select>
+
+            <input type="email" name="email" placeholder="Email address" />
+            <textarea name="notes" placeholder="What are you planning?"></textarea>
+
+            <label class="check-row">
+              <input type="checkbox" name="updates" />
+              <span>Send me seasonal trail notes and new guide announcements.</span>
+            </label>
+
+            <div>
+              <button class="btn btn-primary" type="submit">
+                Subscribe to trail notes
+              </button>
+            </div>
+            <p class="fine-print">
+              We send one email each month. This demo form does not submit
+              anywhere.
+            </p>
+          </form>
+        </div>
+      </section>
+
+      <section id="journal">
+        <div class="wrap">
+          <h2>From the journal</h2>
+          <p class="lede">
+            Notes on route finding, low-impact camping, and the small rituals
+            that make a trip memorable.
+          </p>
+          <p class="section-note">
+            New entries are published every other Thursday during the season.
+          </p>
+          <a class="icon-button" href="#" style="display: inline-flex">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14"></path>
+              <path d="m13 6 6 6-6 6"></path>
+            </svg>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap footer-row">
+        <span>© 2026 Northwind Trails. Fictional demo content.</span>
+        <span>Made for accessibility testing, not for commerce.</span>
+      </div>
+    </footer>
+  </body>
+</html>

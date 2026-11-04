@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="presentation">
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1d1d2b"/>
+      <stop offset="1" stop-color="#101017"/>
+    </linearGradient>
+    <linearGradient id="pack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#4338ca"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="420" fill="url(#panel)"/>
+  <circle cx="500" cy="90" r="120" fill="#6366f1" opacity="0.13"/>
+  <path d="M230 120c0-44 36-80 80-80h20c44 0 80 36 80 80v20h-40v-20c0-22-18-40-40-40h-20c-22 0-40 18-40 40v20h-40Z" fill="#a5b4fc"/>
+  <rect x="190" y="130" width="260" height="220" rx="36" fill="url(#pack)"/>
+  <rect x="220" y="190" width="200" height="120" rx="18" fill="#0b0c14" opacity="0.45"/>
+  <rect x="240" y="215" width="160" height="12" rx="6" fill="#c4b5fd" opacity="0.85"/>
+  <rect x="240" y="243" width="110" height="10" rx="5" fill="#a5b4fc" opacity="0.6"/>
+  <rect x="240" y="267" width="135" height="10" rx="5" fill="#a5b4fc" opacity="0.45"/>
+</svg>
