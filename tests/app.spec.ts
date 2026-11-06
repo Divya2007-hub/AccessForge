@@ -308,7 +308,7 @@ test.describe("Accessible application pages", () => {
         exact: true,
       });
       if ((await imageHeading.count()) > 0) break;
-      await page.getByRole("button", { name: "Next" }).click();
+      await page.getByRole("button", { name: "Next", exact: true }).click();
     }
     await expect(
       page.getByRole("heading", {
@@ -398,7 +398,7 @@ test.describe("Accessible application pages", () => {
       if ((await page.getByText("Approved in this browser").count()) > 0) {
         break;
       }
-      await page.getByRole("button", { name: "Next" }).click();
+      await page.getByRole("button", { name: "Next", exact: true }).click();
     }
     await expect(page.getByText("Approved in this browser")).toBeVisible();
     await page.getByRole("button", { name: "Reopen review" }).click();

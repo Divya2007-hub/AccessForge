@@ -11,8 +11,9 @@ import {
   type LaunchOptions,
   type Page,
 } from "playwright";
-import { getRemediation } from "./remediation";
+import { acquireScanSlot, releaseScanSlot } from "../server/scan-concurrency";
 import { MANUAL_CHECKS } from "./manual-checks";
+import { getRemediation } from "./remediation";
 import { TargetGuard } from "./url-guard";
 import { wcagReferences } from "./wcag";
 import {
@@ -41,17 +42,13 @@ const VIEWPORT = { width: 1366, height: 900 };
 const NAVIGATION_TIMEOUT_MS = 30_000;
 const NETWORK_IDLE_TIMEOUT_MS = 3_000;
 const AXE_TIMEOUT_MS = 25_000;
-const MAX_CONCURRENT_SCANS = Number(
-  process.env.ACCESSFORGE_MAX_CONCURRENT_SCANS ?? 2,
-);
 const MAX_ELEMENTS_PER_RULE = 10;
 const MAX_HTML_LENGTH = 600;
-
-let activeScans = 0;
 
 export interface ScanOptions {
   mode: ScanMode;
   url?: string;
+  clientId?: string;
 }
 
 function withTimeout<T>(
@@ -295,15 +292,9 @@ async function resolveDemoFile(): Promise<string> {
 }
 
 export async function runScan(options: ScanOptions): Promise<ScanReport> {
-  if (activeScans >= MAX_CONCURRENT_SCANS) {
-    throw new ScanError(
-      "BUSY",
-      "The scanner is handling other audits right now. Please try again in a moment.",
-      503,
-    );
-  }
+  const clientId = options.clientId ?? "internal";
+  acquireScanSlot(clientId);
 
-  activeScans += 1;
   const startedAt = Date.now();
   let browser: Browser | undefined;
   let context: BrowserContext | undefined;
@@ -430,6 +421,6 @@ export async function runScan(options: ScanOptions): Promise<ScanReport> {
   } finally {
     await context?.close().catch(() => undefined);
     await browser?.close().catch(() => undefined);
-    activeScans = Math.max(0, activeScans - 1);
+    releaseScanSlot(clientId);
   }
 }

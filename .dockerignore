@@ -1,0 +1,36 @@
+# Secrets and local environment
+.env
+.env.*
+.env*
+
+# Version control
+.git
+.gitignore
+
+# Local Switch handoffs
+.accessforge
+
+# Dependencies and build output
+node_modules
+.next
+out
+build
+coverage
+
+# Test artifacts
+test-results
+playwright-report
+
+# Local logs
+*.log
+dev-server.log
+dev-server.err.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Local tooling
+.vercel
+*.tsbuildinfo
+.DS_Store

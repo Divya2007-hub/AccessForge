@@ -109,6 +109,7 @@ export type ScanErrorCode =
   | "RATE_LIMITED"
   | "BUSY"
   | "BROWSER_UNAVAILABLE"
+  | "UNAUTHORIZED"
   | "SCAN_FAILED";
 
 export interface ScanErrorPayload {
@@ -119,12 +120,19 @@ export interface ScanErrorPayload {
 export class ScanError extends Error {
   readonly code: ScanErrorCode;
   readonly status: number;
+  readonly retryAfterSeconds?: number;
 
-  constructor(code: ScanErrorCode, message: string, status = 400) {
+  constructor(
+    code: ScanErrorCode,
+    message: string,
+    status = 400,
+    retryAfterSeconds?: number,
+  ) {
     super(message);
     this.name = "ScanError";
     this.code = code;
     this.status = status;
+    this.retryAfterSeconds = retryAfterSeconds;
   }
 }
 

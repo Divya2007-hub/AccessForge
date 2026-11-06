@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { runScan } from "@/lib/scanner/run-scan";
 import { ScanError } from "@/lib/scanner/types";
-import { errorResponse, noStoreHeaders } from "@/lib/server/api";
-import { checkRateLimit, requestIp } from "@/lib/server/rate-limit";
+import { errorResponse, noStoreHeaders, scanErrorHeaders } from "@/lib/server/api";
+import { checkScanAccess } from "@/lib/server/scan-access";
+import { SCAN_AUTH_CHALLENGE } from "@/lib/server/scan-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,21 +17,30 @@ const scanRequestSchema = z
   .strict();
 
 export async function POST(request: Request) {
-  const ip = requestIp(request);
-  const rate = checkRateLimit(`scan:${ip}`, 8, 60_000);
+  const access = checkScanAccess(request);
 
-  if (!rate.allowed) {
+  if (!access.ok) {
+    if (access.code === "UNAUTHORIZED") {
+      return errorResponse(
+        "UNAUTHORIZED",
+        "This scanner requires a username and password. Check the deployment configuration and try again.",
+        401,
+        {
+          ...noStoreHeaders(),
+          "WWW-Authenticate": SCAN_AUTH_CHALLENGE,
+        },
+      );
+    }
+
     return errorResponse(
       "RATE_LIMITED",
-      `Too many scans. Try again in ${rate.retryAfterSeconds} seconds.`,
+      `Too many scans. Try again in ${access.retryAfterSeconds} seconds.`,
       429,
-      {
-        ...noStoreHeaders(),
-        "Retry-After": String(rate.retryAfterSeconds),
-      },
+      scanErrorHeaders(access.retryAfterSeconds),
     );
   }
 
+  const { clientId } = access;
   const contentLength = Number(request.headers.get("content-length") ?? 0);
   if (contentLength > 4_096) {
     return errorResponse(
@@ -64,7 +74,11 @@ export async function POST(request: Request) {
   }
 
   try {
-    const report = await runScan({ mode: "remote", url: parsed.data.url });
+    const report = await runScan({
+      mode: "remote",
+      url: parsed.data.url,
+      clientId,
+    });
     return NextResponse.json(
       { ok: true, report },
       { headers: noStoreHeaders() },
@@ -75,7 +89,7 @@ export async function POST(request: Request) {
         error.code,
         error.message,
         error.status,
-        noStoreHeaders(),
+        scanErrorHeaders(error.retryAfterSeconds),
       );
     }
 

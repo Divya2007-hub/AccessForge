@@ -1,31 +1,35 @@
 import { NextResponse } from "next/server";
 import { runScan } from "@/lib/scanner/run-scan";
 import { ScanError } from "@/lib/scanner/types";
-import { errorResponse, noStoreHeaders } from "@/lib/server/api";
-import { checkRateLimit, requestIp } from "@/lib/server/rate-limit";
+import { errorResponse, noStoreHeaders, scanErrorHeaders } from "@/lib/server/api";
+import { getClientIp } from "@/lib/server/client-ip";
+import { getDemoRateLimit } from "@/lib/server/limits";
+import { checkRateLimit } from "@/lib/server/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 export async function POST(request: Request) {
-  const ip = requestIp(request);
-  const rate = checkRateLimit(`demo:${ip}`, 6, 60_000);
+  const clientId = getClientIp(request);
+  const rateLimit = getDemoRateLimit();
+  const rate = checkRateLimit(
+    `demo:${clientId}`,
+    rateLimit.limit,
+    rateLimit.windowMs,
+  );
 
   if (!rate.allowed) {
     return errorResponse(
       "RATE_LIMITED",
       `Too many demo audits. Try again in ${rate.retryAfterSeconds} seconds.`,
       429,
-      {
-        ...noStoreHeaders(),
-        "Retry-After": String(rate.retryAfterSeconds),
-      },
+      scanErrorHeaders(rate.retryAfterSeconds),
     );
   }
 
   try {
-    const report = await runScan({ mode: "demo" });
+    const report = await runScan({ mode: "demo", clientId });
     return NextResponse.json(
       { ok: true, report },
       { headers: noStoreHeaders() },
@@ -36,7 +40,7 @@ export async function POST(request: Request) {
         error.code,
         error.message,
         error.status,
-        noStoreHeaders(),
+        scanErrorHeaders(error.retryAfterSeconds),
       );
     }
 

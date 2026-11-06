@@ -17,3 +17,12 @@ export function noStoreHeaders() {
     "Cache-Control": "no-store, max-age=0",
   };
 }
+
+export function scanErrorHeaders(retryAfterSeconds?: number) {
+  return {
+    ...noStoreHeaders(),
+    ...(retryAfterSeconds
+      ? { "Retry-After": String(retryAfterSeconds) }
+      : {}),
+  };
+}
