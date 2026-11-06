@@ -4,7 +4,6 @@ import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
-  ArrowLeft,
   ArrowRight,
   ClipboardList,
   Download,
@@ -15,6 +14,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
+import { PageNavigation } from "@/components/app/page-navigation";
 import { useDeveloperMode } from "@/components/developer-mode-provider";
 import { ImpactBadge } from "@/components/report/impact-badge";
 import { IssueCard } from "@/components/report/issue-card";
@@ -62,13 +62,13 @@ function ReportSkeleton() {
 function MissingReport() {
   return (
     <div className="space-y-6">
-      <Link
-        href="/dashboard"
-        className="inline-flex items-center gap-1.5 rounded-sm text-xs text-subtle transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <ArrowLeft className="size-3.5" aria-hidden="true" />
-        Back to my scans
-      </Link>
+      <PageNavigation
+        back={{ href: "/dashboard", label: "Back to my scans" }}
+        breadcrumbs={[
+          { href: "/dashboard", label: "My scans" },
+          { label: "Results" },
+        ]}
+      />
       <PageHeader
         eyebrow="Results"
         title="We could not find this result"
@@ -232,13 +232,13 @@ export function ReportView() {
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/dashboard"
-        className="inline-flex items-center gap-1.5 rounded-sm text-xs text-subtle transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <ArrowLeft className="size-3.5" aria-hidden="true" />
-        Back to my scans
-      </Link>
+      <PageNavigation
+        back={{ href: "/dashboard", label: "Back to my scans" }}
+        breadcrumbs={[
+          { href: "/dashboard", label: "My scans" },
+          { label: "Results" },
+        ]}
+      />
 
       <PageHeader
         eyebrow="Results"

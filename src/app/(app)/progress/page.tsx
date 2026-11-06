@@ -7,6 +7,15 @@ export const metadata: Metadata = {
     "See which fixes were reviewed and approved, check real agent availability, and understand what still needs a person.",
 };
 
-export default function ProgressPage() {
-  return <ProgressView />;
+export default async function ProgressPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ report?: string | string[] }>;
+}) {
+  const params = await searchParams;
+  const reportId = Array.isArray(params.report)
+    ? params.report[0]
+    : params.report;
+
+  return <ProgressView initialReportId={reportId ?? null} />;
 }

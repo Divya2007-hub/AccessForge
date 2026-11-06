@@ -97,7 +97,11 @@ export default function DashboardPage() {
           <>
             {hydrated && history.length > 0 ? (
               <Button asChild variant="secondary">
-                <Link href="/progress">View progress</Link>
+                <Link
+                  href={`/progress?report=${encodeURIComponent(history[0].id)}`}
+                >
+                  View progress
+                </Link>
               </Button>
             ) : null}
             <Button asChild>

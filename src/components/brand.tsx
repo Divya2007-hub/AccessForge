@@ -74,6 +74,7 @@ export function Brand({
   return (
     <Link
       href={href}
+      aria-label={href === "/" ? "AccessForge home" : undefined}
       className={cn(
         "inline-flex items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         className,

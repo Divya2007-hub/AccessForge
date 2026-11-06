@@ -3,7 +3,6 @@
 import * as React from "react";
 import Link from "next/link";
 import {
-  ArrowLeft,
   ArrowRight,
   CheckCircle2,
   CircleDashed,
@@ -14,6 +13,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
+import { PageNavigation } from "@/components/app/page-navigation";
 import { useDeveloperMode } from "@/components/developer-mode-provider";
 import { ImpactBadge } from "@/components/report/impact-badge";
 import { SwitchActivityFeed } from "@/components/switch/switch-activity-feed";
@@ -38,12 +38,25 @@ import {
 } from "@/lib/review/proposals";
 import { formatDateTime, formatHostname } from "@/lib/utils";
 
-export function ProgressView() {
+export function ProgressView({
+  initialReportId,
+}: {
+  initialReportId: string | null;
+}) {
   const developer = useDeveloperMode();
   const { history, hydrated: historyHydrated } = useScanHistory();
   const { state, hydrated: reviewHydrated } = useReviewState();
-  const latest = history[0] ?? null;
-  const report = useStoredReport(latest?.id ?? "");
+  const historyIds = React.useMemo(
+    () => new Set(history.map((scan) => scan.id)),
+    [history],
+  );
+  const activeReportId =
+    initialReportId && historyIds.has(initialReportId)
+      ? initialReportId
+      : (history[0]?.id ?? "");
+  const activeReport =
+    history.find((scan) => scan.id === activeReportId) ?? null;
+  const report = useStoredReport(activeReportId);
   const { status, loading: statusLoading } = useSwitchStatus();
 
   const proposals = React.useMemo(
@@ -69,12 +82,19 @@ export function ProgressView() {
     (item) => item.status === "approved",
   );
   const reviewedCount = counts.total - counts.pending;
-  const reportName = latest
-    ? latest.mode === "demo"
+  const reportName = activeReport
+    ? activeReport.mode === "demo"
       ? "Bundled demo site"
-      : formatHostname(latest.finalUrl)
+      : formatHostname(activeReport.finalUrl)
     : null;
+  const reportHref = activeReportId
+    ? `/report/${activeReportId}`
+    : "/dashboard";
   const reviewHref = report ? `/review?report=${report.id}` : "/review";
+  const checkLabel =
+    initialReportId && initialReportId === activeReportId
+      ? "Selected check"
+      : "Latest check";
   const agentsReady = Boolean(
     status?.configured &&
       status.online &&
@@ -103,13 +123,20 @@ export function ProgressView() {
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/dashboard"
-        className="inline-flex items-center gap-1.5 rounded-sm text-xs text-subtle transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <ArrowLeft className="size-3.5" aria-hidden="true" />
-        Back to my scans
-      </Link>
+      <PageNavigation
+        back={
+          activeReportId
+            ? { href: reportHref, label: "Back to result" }
+            : { href: "/dashboard", label: "Back to my scans" }
+        }
+        breadcrumbs={[
+          { href: "/dashboard", label: "My scans" },
+          ...(activeReportId
+            ? [{ href: reportHref, label: "Results" }]
+            : []),
+          { label: "Progress" },
+        ]}
+      />
 
       <PageHeader
         eyebrow="Progress"
@@ -143,8 +170,8 @@ export function ProgressView() {
         <CardHeader>
           <CardTitle>Where things stand</CardTitle>
           <CardDescription>
-            {latest
-              ? `Latest check: ${reportName}, ${formatDateTime(latest.scannedAt)}.`
+            {activeReport
+              ? `${checkLabel}: ${reportName}, ${formatDateTime(activeReport.scannedAt)}.`
               : "No website has been checked in this browser yet."}
           </CardDescription>
         </CardHeader>
@@ -159,12 +186,12 @@ export function ProgressView() {
                   <p className="text-sm font-medium text-foreground">
                     Check a page
                   </p>
-                  <Badge variant={latest ? "success" : "secondary"}>
-                    {latest ? "Done" : "Not started"}
+                  <Badge variant={activeReport ? "success" : "secondary"}>
+                    {activeReport ? "Done" : "Not started"}
                   </Badge>
                 </div>
                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  {latest
+                  {activeReport
                     ? "AccessForge has a saved result to work from."
                     : "Start by checking a page you want to improve."}
                 </p>
@@ -303,7 +330,7 @@ export function ProgressView() {
           <CardHeader>
             <CardTitle>Approved fixes</CardTitle>
             <CardDescription>
-              These are the suggestions you approved for the latest check.
+              These are the suggestions you approved for this check.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -327,7 +354,7 @@ export function ProgressView() {
               </ul>
             ) : (
               <p className="rounded-lg border border-dashed border-white/[0.08] bg-white/[0.015] px-4 py-6 text-sm leading-relaxed text-muted-foreground">
-                No fixes have been approved for the latest check.
+                No fixes have been approved for this check.
               </p>
             )}
           </CardContent>

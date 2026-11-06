@@ -64,7 +64,7 @@ export function SiteMobileNav() {
   }, [open]);
 
   React.useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 768px)");
+    const desktop = window.matchMedia("(min-width: 1024px)");
     const handleChange = (event: MediaQueryListEvent) => {
       if (event.matches) setOpen(false);
     };
@@ -122,7 +122,7 @@ export function SiteMobileNav() {
       <button
         ref={triggerRef}
         type="button"
-        className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] bg-surface-2 text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden"
+        className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] bg-surface-2 text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden"
         aria-expanded={open}
         aria-controls="public-mobile-navigation"
         aria-label={open ? "Close navigation menu" : "Open navigation menu"}
@@ -139,7 +139,7 @@ export function SiteMobileNav() {
         <div
           ref={panelRef}
           id="public-mobile-navigation"
-          className="absolute inset-x-0 top-full max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-white/[0.06] bg-surface shadow-[0_24px_60px_-30px_rgba(0,0,0,0.95)] md:hidden"
+          className="absolute inset-x-0 top-full max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-white/[0.06] bg-surface shadow-[0_24px_60px_-30px_rgba(0,0,0,0.95)] lg:hidden"
         >
           <nav
             aria-label="Primary mobile"

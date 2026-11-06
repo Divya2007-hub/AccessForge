@@ -17,6 +17,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
+import { PageNavigation } from "@/components/app/page-navigation";
 import { SwitchActivityFeed } from "@/components/switch/switch-activity-feed";
 import { SwitchStatusPanel } from "@/components/switch/switch-status-panel";
 import { Badge } from "@/components/ui/badge";
@@ -115,6 +116,14 @@ const prerequisites = [
 export default function AgentsPage() {
   return (
     <div className="space-y-6">
+      <PageNavigation
+        back={{ href: "/help", label: "Back to help" }}
+        breadcrumbs={[
+          { href: "/help", label: "Help" },
+          { label: "AI Activity" },
+        ]}
+      />
+
       <PageHeader
         eyebrow="AI Activity"
         title="AI Activity"

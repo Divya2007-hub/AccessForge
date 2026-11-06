@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 
 const links = [
   { href: "/#how-it-works", label: "How it works" },
-  { href: "/help", label: "Help" },
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/review", label: "Review Fixes" },
+  { href: "/progress", label: "Progress" },
+  { href: "/help", label: "Help" },
 ];
 
 export function SiteHeader() {
@@ -16,7 +18,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-8">
         <Brand />
 
-        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
           {links.map((link) => (
             <Link
               key={link.href}

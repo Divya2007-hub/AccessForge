@@ -10,6 +10,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
+import { PageNavigation } from "@/components/app/page-navigation";
 import { useDeveloperMode } from "@/components/developer-mode-provider";
 import { ScanLauncher } from "@/components/scan/scan-launcher";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,14 @@ export default function ScannerPage() {
 
   return (
     <div className="space-y-6">
+      <PageNavigation
+        back={{ href: "/dashboard", label: "Back to my scans" }}
+        breadcrumbs={[
+          { href: "/dashboard", label: "My scans" },
+          { label: "Check a website" },
+        ]}
+      />
+
       <PageHeader
         eyebrow="Check"
         title="Check a website"

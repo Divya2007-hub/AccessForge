@@ -20,6 +20,9 @@ test.describe("Accessible application pages", () => {
     await expect(
       page.getByRole("link", { name: /open dashboard/i }),
     ).toBeVisible();
+    await expect(
+      page.getByRole("banner").getByRole("link", { name: "AccessForge home" }),
+    ).toBeVisible();
     await expectNoA11yViolations(page, "Landing page");
   });
 
@@ -87,7 +90,9 @@ test.describe("Accessible application pages", () => {
     await expect(mobileNav).toHaveCount(0);
   });
 
-  test("public desktop navigation remains unchanged", async ({ page }) => {
+  test("public desktop navigation includes all workspace links", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
 
@@ -101,6 +106,12 @@ test.describe("Accessible application pages", () => {
     ).toBeVisible();
     await expect(
       desktopNav.getByRole("link", { name: "Dashboard" }),
+    ).toBeVisible();
+    await expect(
+      desktopNav.getByRole("link", { name: "Review Fixes" }),
+    ).toBeVisible();
+    await expect(
+      desktopNav.getByRole("link", { name: "Progress" }),
     ).toBeVisible();
     await expect(
       page.getByRole("button", { name: /navigation menu/i }),
@@ -119,6 +130,9 @@ test.describe("Accessible application pages", () => {
       name: "Main",
       exact: true,
     });
+    await expect(
+      navigation.getByRole("link", { name: "Home" }),
+    ).toHaveAttribute("href", "/");
     await expect(navigation.getByRole("link", { name: "My scans" })).toBeVisible();
     await expect(
       navigation.getByRole("link", { name: "Review fixes" }),
@@ -285,6 +299,18 @@ test.describe("Accessible application pages", () => {
     await page.getByRole("button", { name: /run demo audit/i }).click();
     await page.waitForURL(/\/report\/[^/]+$/, { timeout: 90_000 });
 
+    const reportUrl = page.url();
+    const reportId = new URL(reportUrl).pathname.split("/").pop();
+    expect(reportId).toBeTruthy();
+
+    const breadcrumbs = page.getByRole("navigation", { name: "Breadcrumb" });
+    await expect(
+      breadcrumbs.getByRole("link", { name: "My scans" }),
+    ).toHaveAttribute("href", "/dashboard");
+    await expect(
+      breadcrumbs.getByText("Results", { exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+
     await page
       .getByRole("main")
       .getByRole("link", { name: "Review fixes", exact: true })
@@ -295,6 +321,12 @@ test.describe("Accessible application pages", () => {
     await expect(
       page.getByRole("heading", { name: "Review fixes" }),
     ).toBeVisible();
+    await expect(
+      breadcrumbs.getByRole("link", { name: "Results" }),
+    ).toHaveAttribute("href", `/report/${reportId}`);
+    await expect(
+      breadcrumbs.getByText("Review fixes", { exact: true }),
+    ).toHaveAttribute("aria-current", "page");
     await expect(
       page.getByText(/nothing changes automatically/i),
     ).toBeVisible();
@@ -382,6 +414,9 @@ test.describe("Accessible application pages", () => {
     expect(diffText).toContain('+<img src="./demo-hero.svg"');
 
     await page.getByRole("link", { name: "View progress" }).first().click();
+    await expect(page).toHaveURL(/\/progress\?report=/);
+    const progressUrl = page.url();
+    expect(new URL(progressUrl).searchParams.get("report")).toBe(reportId);
     await expect(
       page.getByRole("heading", { name: "Your progress" }),
     ).toBeVisible();
@@ -392,6 +427,22 @@ test.describe("Accessible application pages", () => {
       page.getByText("Images must have alternative text").first(),
     ).toBeVisible();
     await expect(page.getByText("Not tracked here").first()).toBeVisible();
+    await expect(
+      breadcrumbs.getByRole("link", { name: "Results" }),
+    ).toHaveAttribute("href", `/report/${reportId}`);
+    await expect(
+      breadcrumbs.getByText("Progress", { exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+
+    await page.goBack();
+    await expect(page).toHaveURL(reviewUrl);
+    await page.goForward();
+    await expect(page).toHaveURL(progressUrl);
+
+    await page.getByRole("link", { name: "Back to result" }).click();
+    await expect(page).toHaveURL(reportUrl);
+    await page.getByRole("link", { name: "Back to my scans" }).first().click();
+    await expect(page).toHaveURL(/\/dashboard$/);
 
     await page.goto(reviewUrl);
     for (let attempt = 0; attempt < 8; attempt += 1) {

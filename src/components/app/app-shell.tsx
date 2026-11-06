@@ -9,6 +9,7 @@ import {
   Code2,
   ExternalLink,
   HelpCircle,
+  Home,
   LayoutDashboard,
   Menu,
   ScanSearch,
@@ -20,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const navigation = [
+  { href: "/", label: "Home", icon: Home },
   { href: "/dashboard", label: "My scans", icon: LayoutDashboard },
   { href: "/review", label: "Review fixes", icon: ScanSearch },
   { href: "/progress", label: "Progress", icon: CircleDashed },
@@ -27,9 +29,15 @@ const navigation = [
 ];
 
 function isActivePath(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
   if (href === "/dashboard") return pathname === "/dashboard";
   if (href === "/review") return pathname === "/review";
   return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function navigationHref(href: string, reportId: string | null) {
+  if (!reportId || (href !== "/review" && href !== "/progress")) return href;
+  return `${href}?report=${encodeURIComponent(reportId)}`;
 }
 
 function DeveloperModeButton({
@@ -64,6 +72,10 @@ function DeveloperModeButton({
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const reportId = React.useMemo(() => {
+    const match = pathname.match(/^\/report\/([^/]+)/);
+    return match?.[1] ?? null;
+  }, [pathname]);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const developer = useDeveloperMode();
   const triggerRef = React.useRef<HTMLButtonElement>(null);
@@ -116,7 +128,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={navigationHref(item.href, reportId)}
                   aria-current={active ? "page" : undefined}
                   className={cn(
                     "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
@@ -185,7 +197,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   return (
                     <li key={item.href}>
                       <Link
-                        href={item.href}
+                        href={navigationHref(item.href, reportId)}
                         aria-current={active ? "page" : undefined}
                         onClick={() => setMobileOpen(false)}
                         className={cn(

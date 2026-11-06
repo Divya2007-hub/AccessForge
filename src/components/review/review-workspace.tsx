@@ -19,6 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
+import { PageNavigation } from "@/components/app/page-navigation";
 import { useDeveloperMode } from "@/components/developer-mode-provider";
 import { ImpactBadge } from "@/components/report/impact-badge";
 import { CodePane, DiffView } from "@/components/review/proposal-code";
@@ -702,9 +703,6 @@ export function ReviewWorkspace({
   const { history, hydrated: historyHydrated } = useScanHistory();
   const { state, hydrated: reviewHydrated } = useReviewState();
 
-  const [selectedReportId, setSelectedReportId] = React.useState(
-    initialReportId ?? "",
-  );
   const [activeProposalId, setActiveProposalId] = React.useState<string | null>(
     null,
   );
@@ -715,11 +713,9 @@ export function ReviewWorkspace({
   );
 
   const activeReportId =
-    selectedReportId && historyIds.has(selectedReportId)
-      ? selectedReportId
-      : initialReportId && historyIds.has(initialReportId)
-        ? initialReportId
-        : (history[0]?.id ?? "");
+    initialReportId && historyIds.has(initialReportId)
+      ? initialReportId
+      : (history[0]?.id ?? "");
 
   const report = useStoredReport(activeReportId);
 
@@ -778,7 +774,6 @@ export function ReviewWorkspace({
     counts.total > 0 ? Math.round((reviewedCount / counts.total) * 100) : 0;
 
   function selectReport(reportId: string) {
-    setSelectedReportId(reportId);
     setActiveProposalId(null);
     router.replace(`/review?report=${encodeURIComponent(reportId)}`, {
       scroll: false,
@@ -886,6 +881,13 @@ export function ReviewWorkspace({
   if (history.length === 0) {
     return (
       <div className="space-y-6">
+        <PageNavigation
+          back={{ href: "/dashboard", label: "Back to my scans" }}
+          breadcrumbs={[
+            { href: "/dashboard", label: "My scans" },
+            { label: "Review fixes" },
+          ]}
+        />
         <PageHeader
           eyebrow="Fixes"
           title="Review fixes"
@@ -914,27 +916,33 @@ export function ReviewWorkspace({
   }
 
   const reportHref = activeReportId ? `/report/${activeReportId}` : "/dashboard";
+  const progressHref = activeReportId
+    ? `/progress?report=${encodeURIComponent(activeReportId)}`
+    : "/progress";
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link
-          href={reportHref}
-          className="inline-flex items-center gap-1.5 rounded-sm text-xs text-subtle transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <ArrowLeft className="size-3.5" aria-hidden="true" />
-          Back to results
-        </Link>
-        {counts.approved > 0 ? (
-          <Link
-            href="/progress"
-            className="inline-flex items-center gap-1.5 rounded-sm text-xs font-medium text-violet-300 transition-colors hover:text-violet-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            View progress
-            <ArrowRight className="size-3.5" aria-hidden="true" />
-          </Link>
-        ) : null}
-      </div>
+      <PageNavigation
+        back={{ href: reportHref, label: "Back to results" }}
+        breadcrumbs={[
+          { href: "/dashboard", label: "My scans" },
+          ...(activeReportId
+            ? [{ href: reportHref, label: "Results" }]
+            : []),
+          { label: "Review fixes" },
+        ]}
+        actions={
+          counts.approved > 0 ? (
+            <Link
+              href={progressHref}
+              className="inline-flex items-center gap-1.5 rounded-sm text-xs font-medium text-violet-300 transition-colors hover:text-violet-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              View progress
+              <ArrowRight className="size-3.5" aria-hidden="true" />
+            </Link>
+          ) : undefined
+        }
+      />
 
       <PageHeader
         eyebrow="Fixes"
@@ -1271,7 +1279,7 @@ export function ReviewWorkspace({
           </Button>
           {counts.approved > 0 ? (
             <Button asChild size="sm">
-              <Link href="/progress">
+              <Link href={progressHref}>
                 View progress
                 <ArrowRight aria-hidden="true" />
               </Link>
