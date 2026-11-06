@@ -203,12 +203,11 @@ export function recordReviewEvent(input: RecordReviewEventInput): ReviewEvent {
 export function saveProposalDraft(proposalId: string, proposed: string) {
   const value = proposed.trim().slice(0, MAX_PROPOSED_LENGTH);
   const current = getReviewState();
-  const drafts: Record<string, ProposalDraft> = {
-    ...current.drafts,
-    [proposalId]: {
-      proposed: value,
-      updatedAt: new Date().toISOString(),
-    },
+  const drafts: Record<string, ProposalDraft> = { ...current.drafts };
+  delete drafts[proposalId];
+  drafts[proposalId] = {
+    proposed: value,
+    updatedAt: new Date().toISOString(),
   };
 
   const entries = Object.entries(drafts).slice(-MAX_DRAFTS);

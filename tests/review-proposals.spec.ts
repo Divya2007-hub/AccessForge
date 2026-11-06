@@ -197,4 +197,26 @@ test.describe("Review proposal generation", () => {
     expect(reopened.status).toBe("pending");
     expect(reopened.lastEvent?.action).toBe("reopened");
   });
+
+  test("keeps approval blocked while the placeholder remains after an edit", () => {
+    const proposals = buildReviewProposals(makeReport());
+    const image = proposals.find(
+      (proposal) => proposal.id === "report-1:image-alt:0",
+    )!;
+
+    const item = deriveReviewItems(proposals, {
+      version: 1,
+      drafts: {
+        [image.id]: {
+          proposed:
+            '<img src="hero.png" alt="[Describe the image purpose] hikers on a ridge">',
+          updatedAt: "2026-01-01T00:00:00.000Z",
+        },
+      },
+      events: [],
+    }).find((entry) => entry.id === image.id)!;
+
+    expect(item.isEdited).toBe(true);
+    expect(item.needsAuthorInput).toBe(true);
+  });
 });
