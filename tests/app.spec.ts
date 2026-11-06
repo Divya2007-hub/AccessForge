@@ -18,8 +18,10 @@ test.describe("Accessible application pages", () => {
       page.getByRole("button", { name: /run accessibility scan/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: /open dashboard/i }),
-    ).toBeVisible();
+      page.getByRole("main").getByRole("link", {
+        name: "Start accessibility scan",
+      }),
+    ).toHaveAttribute("href", "/scanner");
     await expect(
       page.getByRole("banner").getByRole("link", { name: "AccessForge home" }),
     ).toBeVisible();

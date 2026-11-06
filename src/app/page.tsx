@@ -55,13 +55,18 @@ export default function HomePage() {
       <main id="main-content" className="flex-1">
         <section className="relative isolate overflow-hidden border-b border-white/[0.06]">
           <div className="hero-glow absolute inset-0 -z-10" aria-hidden="true" />
+          <div className="hero-arc" aria-hidden="true" />
           <div
-            className="background-grid absolute inset-0 -z-10 opacity-60"
+            className="background-grid absolute inset-0 -z-10 opacity-45"
             aria-hidden="true"
           />
-          <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 pb-16 pt-14 sm:px-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-16 lg:pb-24 lg:pt-20">
-            <div className="animate-enter">
-              <Badge variant="outline" className="gap-2">
+
+          <div className="mx-auto flex w-full max-w-5xl flex-col items-center px-5 pb-16 pt-14 text-center sm:px-8 sm:pt-16 lg:pb-20 lg:pt-16">
+            <div className="animate-enter flex w-full flex-col items-center">
+              <Badge
+                variant="outline"
+                className="gap-2 border-violet-300/20 bg-violet-400/[0.06] px-3 py-1 text-violet-100/80"
+              >
                 <span
                   className="size-1.5 rounded-full bg-emerald-400"
                   aria-hidden="true"
@@ -69,31 +74,43 @@ export default function HomePage() {
                 Live accessibility audits
               </Badge>
 
-              <h1 className="mt-5 text-balance text-[2.65rem] font-semibold leading-[1.04] tracking-[-0.045em] text-foreground sm:text-6xl lg:text-[4rem]">
+              <h1 className="mt-6 max-w-4xl text-balance text-[2.85rem] font-semibold leading-[0.98] tracking-[-0.05em] text-foreground sm:text-6xl lg:text-[4.75rem]">
                 Find and fix accessibility{" "}
                 <span className="text-gradient">issues.</span>
               </h1>
 
-              <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
+              <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
                 Scan any public page, understand the real findings in plain
                 language, and review fixes before anything leaves your browser.
               </p>
 
-              <div className="mt-7 flex flex-wrap items-center gap-3">
-                <Button asChild variant="secondary">
-                  <Link href="/dashboard">
-                    Open dashboard
+              <div className="mt-7 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
+                <Button
+                  asChild
+                  size="lg"
+                  className="h-12 w-full rounded-xl px-6 shadow-[0_20px_55px_-28px_rgba(124,58,237,1)] sm:w-auto"
+                >
+                  <Link href="/scanner">
+                    Start accessibility scan
                     <ArrowRight aria-hidden="true" />
                   </Link>
                 </Button>
-                <Button asChild variant="ghost">
+                <Button
+                  asChild
+                  variant="secondary"
+                  size="lg"
+                  className="h-12 w-full rounded-xl border-white/[0.1] bg-white/[0.035] px-6 hover:bg-white/[0.06] sm:w-auto"
+                >
                   <Link href="/help">How AccessForge works</Link>
                 </Button>
               </div>
 
-              <dl className="mt-10 grid grid-cols-2 gap-3 text-xs text-muted-foreground sm:max-w-lg">
+              <dl className="mt-8 grid w-full max-w-3xl grid-cols-2 gap-x-5 gap-y-3 text-xs text-muted-foreground sm:grid-cols-4">
                 {trustItems.map((item) => (
-                  <div key={item.label} className="flex items-center gap-2">
+                  <div
+                    key={item.label}
+                    className="flex items-center justify-start gap-2 sm:justify-center"
+                  >
                     <item.icon
                       className="size-3.5 shrink-0 text-violet-300/80"
                       aria-hidden="true"
@@ -105,13 +122,13 @@ export default function HomePage() {
               </dl>
             </div>
 
-            <div className="animate-enter animate-enter-delay-1">
-              <Card className="overflow-hidden border-white/[0.1] bg-card/90 shadow-[0_30px_80px_-50px_rgba(0,0,0,1)]">
+            <div className="animate-enter animate-enter-delay-1 mt-8 w-full max-w-2xl">
+              <Card className="overflow-hidden border-violet-300/[0.12] bg-card/85 shadow-[0_40px_120px_-60px_rgba(76,29,149,0.9)]">
                 <div
                   className="h-px w-full hairline-gradient"
                   aria-hidden="true"
                 />
-                <CardContent className="p-5 sm:p-7">
+                <CardContent className="p-5 text-left sm:p-7">
                   <div className="mb-5">
                     <p className="text-lg font-semibold tracking-tight text-foreground">
                       Start with a URL

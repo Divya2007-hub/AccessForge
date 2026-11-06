@@ -125,9 +125,37 @@
 
   .hero-glow {
     background:
-      radial-gradient(60% 50% at 50% 0%, rgba(139, 92, 246, 0.18), transparent 70%),
-      radial-gradient(40% 40% at 80% 10%, rgba(99, 102, 241, 0.12), transparent 70%),
-      radial-gradient(30% 30% at 15% 20%, rgba(168, 85, 247, 0.08), transparent 70%);
+      radial-gradient(
+        ellipse 52% 44% at 50% -4%,
+        rgba(139, 92, 246, 0.25),
+        transparent 68%
+      ),
+      radial-gradient(
+        ellipse 34% 34% at 78% 8%,
+        rgba(99, 102, 241, 0.13),
+        transparent 72%
+      ),
+      radial-gradient(
+        ellipse 28% 30% at 18% 16%,
+        rgba(168, 85, 247, 0.09),
+        transparent 72%
+      );
+  }
+
+  .hero-arc {
+    position: absolute;
+    left: 50%;
+    top: 2rem;
+    z-index: -10;
+    width: min(112rem, 210vw);
+    aspect-ratio: 1.15 / 1;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    border-top: 1px solid rgba(196, 181, 253, 0.26);
+    box-shadow:
+      0 -2px 22px -6px rgba(196, 181, 253, 0.16),
+      0 -36px 130px -42px rgba(124, 58, 237, 0.85);
+    pointer-events: none;
   }
 
   .text-gradient {
