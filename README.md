@@ -331,4 +331,6 @@ For production traffic, use a dedicated browser worker and a shared rate-limit s
 
 ## License
 
-No license file is currently included. Add a license before distributing or reusing the project.
+AccessForge is open-source software licensed under the [MIT License](LICENSE).
+
+Copyright © 2026 Divya Kumari.
